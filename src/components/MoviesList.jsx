@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { loadMovies, selectAllMovies } from "../store/movies";
+import { loadMovies, selectAllMovies } from "../store/slices/movies";
 
 const MoviesList = () => {
     const dispatch = useDispatch();
