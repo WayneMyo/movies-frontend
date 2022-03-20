@@ -1,5 +1,4 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import moment from 'moment';
 import { apiCallBegan } from '../api';
 
 let id = 0;
@@ -9,7 +8,12 @@ const movieSlice = createSlice({
         moviesById: {},
         movieIdArr: [],
         loading: false,
-        lastFetch: null
+        key: 'releaseYear',
+        value: '2010',
+        filterBy: '',
+        orderBy: 'title',
+        order: 'asc',
+        limit: 30,
     },
     reducers: {
         moviesRequested: (movies, action) => {
@@ -17,7 +21,9 @@ const movieSlice = createSlice({
         },
         moviesReceived: (movies, action) => {
             movies.loading = false;
-            movies.lastFetch = Date.now();
+            movies.moviesById = {};
+            movies.movieIdArr = [];
+            
             action.payload.forEach(movie => {
                 const movieId = ++id;
                 movies.moviesById[movieId] = movie;
@@ -26,23 +32,39 @@ const movieSlice = createSlice({
         },
         moviesRequestFailed: (movies, action) => {
             movies.loading = false;
+        },
+        moviesSetSearch: (movies, action) => {
+            movies.key = action.payload.key;
+            movies.value = action.payload.value;
+        },
+        moviesSetSort: (movies, action) => {
+            movies.orderBy = action.payload.orderBy;
+            movies.order = action.payload.order;
+        },
+        moviesSetFilter: (movies, action) => {
+            movies.filterBy = action.payload.filterBy;
         }
     }
 });
 
 export default movieSlice.reducer;
-const { moviesRequested, moviesReceived, moviesRequestFailed } = movieSlice.actions;
+const { 
+    moviesRequested,
+    moviesReceived,
+    moviesRequestFailed,
+    moviesSetSearch,
+    moviesSetSort,
+    moviesSetFilter
+} = movieSlice.actions;
 
 const url = "/movies"
 export const loadMovies = () => (dispatch, getState) => {
-    const { lastFetch } = getState().entities.movies || 0;
-
-    const minuteDiff = moment().diff(moment(lastFetch), 'minutes');
-    if (minuteDiff < 10) return;
-
+    const { key, value, filterBy, orderBy, order, limit } = getState().entities.movies;
+    let getUrl = url + `?${key}=${value}&sort=${orderBy}:${order}&count=${limit}`;
+    if (filterBy) getUrl += `&filterBy=${filterBy}`;
     dispatch(
         apiCallBegan({
-            url,
+            url: getUrl,
             onStart: moviesRequested.type,
             onSuccess: moviesReceived.type,
             onError: moviesRequestFailed.type  
@@ -50,7 +72,24 @@ export const loadMovies = () => (dispatch, getState) => {
     );
 };
 
-export const selectAllMovies = createSelector (
+export const searchMovies = (key, value) => (dispatch) => {
+    dispatch(moviesSetSearch({key, value}));
+}
+
+export const sortMovies = (orderBy, order) => (dispatch) => {
+    dispatch(moviesSetSort({orderBy, order}));
+}
+
+export const filterMovies = (filterBy) => (dispatch) => {
+    dispatch(moviesSetFilter({filterBy}));
+}
+
+export const selectMovies = createSelector (
     state => state.entities.movies,
     movies => Object.values(movies.moviesById)
+);
+
+export const selectSearchValue = createSelector(
+    state => state.entities.movies,
+    movies => movies.value
 );

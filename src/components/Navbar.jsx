@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
 
-const Navbar = ({navToggle, theme}) => {
+const Navbar = ({navToggle}) => {
     return (
         <NavbarStyled className={`${navToggle ? 'nav-toggle' : ''}`}>
-            
+
         </NavbarStyled>
     )
 }

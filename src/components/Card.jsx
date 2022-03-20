@@ -1,19 +1,18 @@
 import React from 'react'
 import styled from 'styled-components';
 
-const Card = (data) => {
-    const imgSrc = data.images["Poster Art"] ? data.images["Poster Art"].url : "";
+const Card = ({title, leftLabel, rightLabel, description, imgSrc}) => {
     return (
         <CardStyled >
             <div className="container">
                 <div className="card-body">
                     <img src={imgSrc}></img>
-                    <p>{data.description}</p>
-                    <span className="programType">{data.programType.charAt(0).toUpperCase() + data.programType.slice(1)}</span>
-                    <span className="releaseYear">{data.releaseYear}</span>
+                    <p>{description}</p>
+                    <span className="rightLabel">{leftLabel}</span>
+                    <span className="leftLabel">{rightLabel}</span>
                 </div>
                 <div className="card-footer">
-                    <h4>{data.title}</h4>
+                    <h4>{title}</h4>
                 </div>
             </div>
         </CardStyled >
@@ -65,12 +64,12 @@ const CardStyled = styled.div`
                 font-size: small;
                 display: none;
             }
-            .programType {
+            .leftLabel {
                 position: absolute;
                 bottom: 0;
                 left: 0;
             }
-            .releaseYear {
+            .rightLabel {
                 position: absolute;
                 bottom: 0;
                 right: 0;
