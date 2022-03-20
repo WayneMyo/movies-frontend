@@ -9,6 +9,37 @@ import DropDownMenu from '../components/DropdownMenu';
 const HomePage = () => {
     const dispatch = useDispatch();
 
+    const sortOptions = [
+        { label: 'Sort by year in descending order', value: 'releaseYear=desc' },
+        { label: 'Sort by year in ascending order', value: 'releaseYear=asc' },
+        { label: 'Sort by title in descending order', value: 'title=desc' },
+        { label: 'Sort by title in ascending order', value: 'title=asc' },
+    ];
+
+    const filterOptions = [
+        { label: 'Filter by series', value: 'series' },
+        { label: 'Filter by movies', value: 'movie' },
+    ];
+
+    const [sortBy, setSortBy] = useState(sortOptions[3].value);
+    const handleSort = (event) => {
+        const sortVal = event.target.value.trim();
+        const [orderBy, order] = sortVal.split("=");
+        setSortBy(sortVal);
+        dispatch(sortMovies(orderBy, order));
+    };
+
+    const [filterBy, setFilterBy] = useState('');
+    const handleFilter = (event) => {
+        const filterBy = event.target.value;
+        if (filterBy) {
+            setFilterBy(filterBy);
+            dispatch(filterMovies(filterBy));
+        }
+    };
+
+
+    const searchVal = useSelector(selectSearchValue);
     const handleSearch = (event) => {
         const searchVal = event.target.value.trim();
         const key = searchVal.length >= 3 ? 'title' : 'releaseYear';
@@ -16,22 +47,6 @@ const HomePage = () => {
         dispatch(searchMovies(key, value));
     };
 
-    const sortOptions = [
-        { label: 'Sort by year in descending order', value: 'releaseYear=DESC' },
-        { label: 'Sort by year in ascending order', value: 'releaseYear=ASC' },
-        { label: 'Sort by title in descending order', value: 'title=DESC' },
-        { label: 'Sort by title in ascending order', value: 'title=ASC' },
-    ];
-
-    const filterOptions = [
-        { label: 'Filter by series', value: 'series' },
-        { label: 'Filter by movies', value: 'movies' },
-    ];
-
-    const [sortBy, setSortBy] = useState(sortOptions[3].value);
-    const [filterBy, setFilterBy] = useState('');
-
-    const searchVal = useSelector(selectSearchValue);
     const movies = useSelector(selectMovies);
 
     useEffect(() => {
@@ -48,8 +63,8 @@ const HomePage = () => {
         <HomePageStyled>
             <div className="top-container">
                 <Searchbox title='Search by title' onChangeFunc={handleSearch} position="right"/>
-                <DropDownMenu options={sortOptions} onChangeFunc={setSortBy} currentVal={sortBy}/>
-                <DropDownMenu options={filterOptions} onChangeFunc={setFilterBy} currentVal={filterBy}/>
+                <DropDownMenu options={sortOptions} onChangeFunc={handleSort} currentVal={sortBy}/>
+                <DropDownMenu options={filterOptions} onChangeFunc={handleFilter} currentVal={filterBy}/>
             </div>
             <div className="bottom-container">
                 {movies.map((movie) => <Card

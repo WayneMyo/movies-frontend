@@ -60,8 +60,8 @@ const {
 const url = "/movies"
 export const loadMovies = () => (dispatch, getState) => {
     const { key, value, filterBy, orderBy, order, limit } = getState().entities.movies;
-    let getUrl = url + `?${key}=${value}&sort=${orderBy}:${order}&count=${limit}`;
-    if (filterBy) getUrl += `&filterBy=${filterBy}`;
+    let getUrl = url + `?searchBy=${key}:${value}&sortBy=${orderBy}:${order}&count=${limit}`;
+    if (filterBy) getUrl += `&filterBy=programType:${filterBy}`;
     dispatch(
         apiCallBegan({
             url: getUrl,

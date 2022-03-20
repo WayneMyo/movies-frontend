@@ -5,7 +5,7 @@ const DropdownMenu = ({options, onChangeFunc, currentVal}) => {
     if (!currentVal) options = [{ label: 'Select', value: '' }, ...options];
     return (
         <DropdownMenuStyled>
-            <select onChange={event => onChangeFunc(event.target.value)} value={currentVal}>
+            <select onChange={onChangeFunc} value={currentVal}>
                 {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select> 
         </DropdownMenuStyled>
